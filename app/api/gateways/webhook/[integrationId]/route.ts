@@ -66,7 +66,11 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       .eq("id", integrationId)
       .maybeSingle();
 
-    if (integrationError || !integration) {
+    if (integrationError) {
+      return NextResponse.json({ error: `Erro ao consultar integração: ${integrationError.message}` }, { status: 500 });
+    }
+
+    if (!integration) {
       return NextResponse.json({ error: "Integração não encontrada" }, { status: 404 });
     }
 
