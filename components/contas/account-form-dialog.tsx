@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { LoaderCircle } from "lucide-react";
+import { Eye, EyeOff, LoaderCircle } from "lucide-react";
 
 import {
   Dialog,
@@ -74,8 +74,7 @@ function defaultValues(account?: InstagramAccount): FormValues {
     notes: account?.notes ?? "",
     bot_platform: account?.bot_platform ?? "",
     bot_login: account?.bot_login ?? "",
-    // Senha nunca é pré-preenchida — em branco significa "manter a atual".
-    bot_password: "",
+    bot_password: account?.bot_password ?? "",
   };
 }
 
@@ -92,12 +91,16 @@ export function AccountFormDialog({
 }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const { register, handleSubmit, control, watch, reset } = useForm<FormValues>({
     defaultValues: defaultValues(account),
   });
 
   useEffect(() => {
-    if (open) reset(defaultValues(account));
+    if (open) {
+      reset(defaultValues(account));
+      setShowPassword(false);
+    }
   }, [open, account, reset]);
 
   const hadRestriction = watch("had_restriction");
@@ -247,12 +250,23 @@ export function AccountFormDialog({
 
           <div className="space-y-1.5">
             <Label>Senha na plataforma</Label>
-            <Input
-              type="password"
-              {...register("bot_password")}
-              placeholder={account?.bot_password ? "Preenchida — deixe em branco pra manter" : "Senha de acesso"}
-              autoComplete="new-password"
-            />
+            <div className="relative">
+              <Input
+                type={showPassword ? "text" : "password"}
+                {...register("bot_password")}
+                placeholder="Senha de acesso"
+                autoComplete="new-password"
+                className="pr-9"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((v) => !v)}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary"
+                tabIndex={-1}
+              >
+                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
           </div>
 
           <div className="col-span-full gold-divider" />

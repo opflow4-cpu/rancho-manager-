@@ -75,15 +75,10 @@ export async function updateAccount(id: string, input: AccountInput) {
     return { error: parsed.error.issues[0]?.message ?? "Dados inválidos" };
   }
 
-  const patch = normalize(parsed.data);
-  // Campo de senha em branco significa "manter a senha já salva" — não
-  // sobrescreve com null só porque o usuário não digitou nada de novo.
-  if (!parsed.data.bot_password) delete (patch as { bot_password?: unknown }).bot_password;
-
   const supabase = await createClient();
   const { error } = await supabase
     .from("instagram_accounts")
-    .update(patch)
+    .update(normalize(parsed.data))
     .eq("id", id);
 
   if (error) {
