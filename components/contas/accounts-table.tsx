@@ -226,7 +226,6 @@ export function AccountsTable({
           <TableRow>
             <TableHead>Operador</TableHead>
             <TableHead>Subnicho</TableHead>
-            <TableHead>Nome</TableHead>
             <TableHead>@</TableHead>
             <TableHead>Entrada</TableHead>
             <SortableHead label="Dias" k="days" />
@@ -244,7 +243,7 @@ export function AccountsTable({
         <TableBody>
           {filtered.length === 0 && (
             <TableRow>
-              <TableCell colSpan={15} className="py-8 text-center text-muted-foreground">
+              <TableCell colSpan={14} className="py-8 text-center text-muted-foreground">
                 Nenhuma conta encontrada com os filtros atuais.
               </TableCell>
             </TableRow>
@@ -253,8 +252,7 @@ export function AccountsTable({
             <TableRow key={account.id}>
               <TableCell>{account.operator_id ? operatorName.get(account.operator_id) ?? "—" : "—"}</TableCell>
               <TableCell>{account.subniche || "—"}</TableCell>
-              <TableCell className="font-medium">{account.account_name}</TableCell>
-              <TableCell className="text-primary">@{account.username}</TableCell>
+              <TableCell className="font-medium text-primary">@{account.username}</TableCell>
               <TableCell>{formatDate(account.entry_date)}</TableCell>
               <TableCell>{daysInProject(account.entry_date)}</TableCell>
               <TableCell>{account.posts_count}</TableCell>

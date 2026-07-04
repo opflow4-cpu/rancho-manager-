@@ -37,7 +37,6 @@ const NONE = "__none__";
 type FormValues = {
   operator_id: string;
   subniche: string;
-  account_name: string;
   username: string;
   entry_date: string;
   posts_count: number;
@@ -58,7 +57,6 @@ function defaultValues(account?: InstagramAccount): FormValues {
   return {
     operator_id: account?.operator_id ?? NONE,
     subniche: account?.subniche ?? "",
-    account_name: account?.account_name ?? "",
     username: account?.username ?? "",
     entry_date: account?.entry_date ?? new Date().toISOString().slice(0, 10),
     posts_count: account?.posts_count ?? 0,
@@ -107,7 +105,8 @@ export function AccountFormDialog({
     const payload: AccountInput = {
       operator_id: values.operator_id === NONE ? null : values.operator_id,
       subniche: values.subniche || null,
-      account_name: values.account_name,
+      // "Nome da conta" não é mais preenchido manualmente — usa o @ como nome.
+      account_name: values.username.trim().replace(/^@/, ""),
       username: values.username,
       entry_date: values.entry_date,
       posts_count: Number(values.posts_count),
@@ -149,11 +148,6 @@ export function AccountFormDialog({
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div className="space-y-1.5">
-            <Label>Nome da conta</Label>
-            <Input {...register("account_name", { required: true })} placeholder="Ex: Rancho Fitness" />
-          </div>
-
           <div className="space-y-1.5">
             <Label>@ da conta</Label>
             <Input {...register("username", { required: true })} placeholder="usuario_instagram" />
