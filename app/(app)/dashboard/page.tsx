@@ -21,7 +21,6 @@ import { MetricCard } from "@/components/dashboard/metric-card";
 import {
   RevenueByOperatorChart,
   AccountsByStatusChart,
-  PostsThisWeekChart,
 } from "@/components/dashboard/charts";
 import { ACCOUNT_STATUS_LABEL, type AccountStatus } from "@/lib/types";
 import { formatCurrency, formatDateTime } from "@/lib/utils";
@@ -29,7 +28,7 @@ import { formatCurrency, formatDateTime } from "@/lib/utils";
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
-  let accounts: { id: string; operator_id: string | null; status: string; posts_count: number; posts_this_week: number; revenue: number; account_name: string; username: string }[] | null = [];
+  let accounts: { id: string; operator_id: string | null; status: string; posts_count: number; revenue: number; account_name: string; username: string }[] | null = [];
   let operators: { id: string; name: string }[] | null = [];
   let gatewayTransactions: { status: string; amount: number; created_at: string }[] = [];
   let gatewayIntegrations: { status: string; last_sync_at: string | null }[] = [];
@@ -39,7 +38,7 @@ export default async function DashboardPage() {
     const [accountsRes, operatorsRes, transactionsRes, integrationsRes] = await Promise.all([
       supabase
         .from("instagram_accounts")
-        .select("id, operator_id, status, posts_count, posts_this_week, revenue, account_name, username"),
+        .select("id, operator_id, status, posts_count, revenue, account_name, username"),
       supabase.from("operators").select("id, name"),
       supabase.from("gateway_transactions").select("status, amount, created_at"),
       supabase.from("gateway_integrations").select("status, last_sync_at"),
@@ -80,21 +79,14 @@ export default async function DashboardPage() {
   const totalRevenue = allAccounts.reduce((sum, a) => sum + Number(a.revenue ?? 0), 0);
 
   const revenueByOperatorMap = new Map<string, number>();
-  const postsByOperatorMap = new Map<string, number>();
   for (const acc of allAccounts) {
     const key = acc.operator_id ? operatorName.get(acc.operator_id) ?? "Sem operador" : "Sem operador";
     revenueByOperatorMap.set(key, (revenueByOperatorMap.get(key) ?? 0) + Number(acc.revenue ?? 0));
-    postsByOperatorMap.set(key, (postsByOperatorMap.get(key) ?? 0) + (acc.posts_this_week ?? 0));
   }
 
   const revenueByOperator = [...revenueByOperatorMap.entries()]
     .map(([name, total]) => ({ name, total }))
     .sort((a, b) => b.total - a.total)
-    .slice(0, 8);
-
-  const postsThisWeek = [...postsByOperatorMap.entries()]
-    .map(([name, posts]) => ({ name, posts }))
-    .sort((a, b) => b.posts - a.posts)
     .slice(0, 8);
 
   const accountsByStatus = (Object.keys(ACCOUNT_STATUS_LABEL) as AccountStatus[]).map((status) => ({
@@ -183,7 +175,6 @@ export default async function DashboardPage() {
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <RevenueByOperatorChart data={revenueByOperator} />
         <AccountsByStatusChart data={accountsByStatus} />
-        <PostsThisWeekChart data={postsThisWeek} />
       </div>
     </div>
   );

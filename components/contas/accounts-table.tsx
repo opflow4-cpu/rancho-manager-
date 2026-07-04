@@ -230,8 +230,6 @@ export function AccountsTable({
             <TableHead>Entrada</TableHead>
             <SortableHead label="Dias" k="days" />
             <SortableHead label="Posts" k="posts" />
-            <TableHead>Posts sem.</TableHead>
-            <TableHead>Último post</TableHead>
             <SortableHead label="Faturamento" k="revenue" />
             <TableHead>Status</TableHead>
             <TableHead>Restrição</TableHead>
@@ -243,7 +241,7 @@ export function AccountsTable({
         <TableBody>
           {filtered.length === 0 && (
             <TableRow>
-              <TableCell colSpan={14} className="py-8 text-center text-muted-foreground">
+              <TableCell colSpan={12} className="py-8 text-center text-muted-foreground">
                 Nenhuma conta encontrada com os filtros atuais.
               </TableCell>
             </TableRow>
@@ -256,8 +254,6 @@ export function AccountsTable({
               <TableCell>{formatDate(account.entry_date)}</TableCell>
               <TableCell>{daysInProject(account.entry_date)}</TableCell>
               <TableCell>{account.posts_count}</TableCell>
-              <TableCell>{account.posts_this_week}</TableCell>
-              <TableCell>{formatDate(account.last_post_date)}</TableCell>
               <TableCell>{formatCurrency(Number(account.revenue))}</TableCell>
               <TableCell>
                 <Badge variant={STATUS_BADGE[account.status]} dot>{ACCOUNT_STATUS_LABEL[account.status]}</Badge>

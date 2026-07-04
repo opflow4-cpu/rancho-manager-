@@ -40,8 +40,6 @@ type FormValues = {
   username: string;
   entry_date: string;
   posts_count: number;
-  posts_this_week: number;
-  last_post_date: string;
   revenue: number;
   status: AccountInput["status"];
   had_restriction: boolean;
@@ -60,8 +58,6 @@ function defaultValues(account?: InstagramAccount): FormValues {
     username: account?.username ?? "",
     entry_date: account?.entry_date ?? new Date().toISOString().slice(0, 10),
     posts_count: account?.posts_count ?? 0,
-    posts_this_week: account?.posts_this_week ?? 0,
-    last_post_date: account?.last_post_date ?? "",
     revenue: account?.revenue ?? 0,
     status: account?.status ?? "aquecendo",
     had_restriction: account?.had_restriction ?? false,
@@ -110,8 +106,6 @@ export function AccountFormDialog({
       username: values.username,
       entry_date: values.entry_date,
       posts_count: Number(values.posts_count),
-      posts_this_week: Number(values.posts_this_week),
-      last_post_date: values.last_post_date || null,
       revenue: Number(values.revenue),
       status: values.status,
       had_restriction: values.had_restriction,
@@ -211,16 +205,6 @@ export function AccountFormDialog({
           <div className="space-y-1.5">
             <Label>Posts feitos (total)</Label>
             <Input type="number" min={0} {...register("posts_count", { valueAsNumber: true })} />
-          </div>
-
-          <div className="space-y-1.5">
-            <Label>Posts feitos essa semana</Label>
-            <Input type="number" min={0} {...register("posts_this_week", { valueAsNumber: true })} />
-          </div>
-
-          <div className="space-y-1.5">
-            <Label>Data do último post</Label>
-            <Input type="date" {...register("last_post_date")} />
           </div>
 
           <div className="space-y-1.5">

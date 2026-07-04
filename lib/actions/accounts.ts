@@ -16,8 +16,8 @@ const accountSchema = z.object({
     .transform((v) => v.replace(/^@/, "")),
   entry_date: z.string().min(1, "Informe a data de entrada"),
   posts_count: z.coerce.number().int().min(0),
-  posts_this_week: z.coerce.number().int().min(0),
-  last_post_date: z.string().nullable(),
+  posts_this_week: z.coerce.number().int().min(0).default(0),
+  last_post_date: z.string().nullable().default(null),
   revenue: z.coerce.number().min(0),
   status: z.enum(["ativa", "aquecendo", "restrita", "bloqueada", "caiu", "pausada"]),
   had_restriction: z.boolean(),
@@ -31,7 +31,7 @@ const accountSchema = z.object({
   notes: z.string().trim().nullable(),
 });
 
-export type AccountInput = z.infer<typeof accountSchema>;
+export type AccountInput = z.input<typeof accountSchema>;
 
 function normalize(input: AccountInput) {
   return {
