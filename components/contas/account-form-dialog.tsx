@@ -49,7 +49,12 @@ type FormValues = {
   chat_attended: boolean;
   chat_responsible_id: string;
   notes: string;
+  bot_platform: string;
+  bot_login: string;
+  bot_password: string;
 };
+
+const BOT_PLATFORM_SUGGESTIONS = ["Apex", "Raven", "SharkBot"];
 
 function defaultValues(account?: InstagramAccount): FormValues {
   return {
@@ -67,6 +72,10 @@ function defaultValues(account?: InstagramAccount): FormValues {
     chat_attended: account?.chat_attended ?? false,
     chat_responsible_id: account?.chat_responsible_id ?? NONE,
     notes: account?.notes ?? "",
+    bot_platform: account?.bot_platform ?? "",
+    bot_login: account?.bot_login ?? "",
+    // Senha nunca é pré-preenchida — em branco significa "manter a atual".
+    bot_password: "",
   };
 }
 
@@ -116,6 +125,9 @@ export function AccountFormDialog({
       chat_attended: values.chat_attended,
       chat_responsible_id: values.chat_responsible_id === NONE ? null : values.chat_responsible_id,
       notes: values.notes || null,
+      bot_platform: values.bot_platform || null,
+      bot_login: values.bot_login || null,
+      bot_password: values.bot_password || null,
     };
 
     const result = account
@@ -210,6 +222,37 @@ export function AccountFormDialog({
           <div className="space-y-1.5">
             <Label>Faturamento da conta (R$)</Label>
             <Input type="number" min={0} step="0.01" {...register("revenue", { valueAsNumber: true })} />
+          </div>
+
+          <div className="col-span-full gold-divider" />
+
+          <div className="space-y-1.5">
+            <Label>Plataforma do bot</Label>
+            <Input
+              {...register("bot_platform")}
+              list="bot-platform-suggestions"
+              placeholder="Ex: Apex, Raven, SharkBot..."
+            />
+            <datalist id="bot-platform-suggestions">
+              {BOT_PLATFORM_SUGGESTIONS.map((p) => (
+                <option key={p} value={p} />
+              ))}
+            </datalist>
+          </div>
+
+          <div className="space-y-1.5">
+            <Label>Login na plataforma</Label>
+            <Input {...register("bot_login")} placeholder="Usuário/e-mail de acesso" autoComplete="off" />
+          </div>
+
+          <div className="space-y-1.5">
+            <Label>Senha na plataforma</Label>
+            <Input
+              type="password"
+              {...register("bot_password")}
+              placeholder={account?.bot_password ? "Preenchida — deixe em branco pra manter" : "Senha de acesso"}
+              autoComplete="new-password"
+            />
           </div>
 
           <div className="col-span-full gold-divider" />

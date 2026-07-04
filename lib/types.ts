@@ -96,6 +96,9 @@ export interface InstagramAccount {
   chat_responsible_id: string | null;
   notes: string | null;
   gateway_product_name: string | null;
+  bot_platform: string | null;
+  bot_login: string | null;
+  bot_password: string | null;
   created_at: string;
   updated_at: string;
 }

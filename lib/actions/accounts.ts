@@ -29,6 +29,9 @@ const accountSchema = z.object({
   chat_attended: z.boolean(),
   chat_responsible_id: z.string().uuid().nullable(),
   notes: z.string().trim().nullable(),
+  bot_platform: z.string().trim().nullable(),
+  bot_login: z.string().trim().nullable(),
+  bot_password: z.string().trim().nullable(),
 });
 
 export type AccountInput = z.input<typeof accountSchema>;
@@ -42,6 +45,9 @@ function normalize(input: AccountInput) {
     notes: input.notes || null,
     restriction_type: input.had_restriction ? input.restriction_type : null,
     chat_responsible_id: input.chat_attended ? input.chat_responsible_id : null,
+    bot_platform: input.bot_platform || null,
+    bot_login: input.bot_login || null,
+    bot_password: input.bot_password || null,
   };
 }
 
@@ -69,10 +75,15 @@ export async function updateAccount(id: string, input: AccountInput) {
     return { error: parsed.error.issues[0]?.message ?? "Dados inválidos" };
   }
 
+  const patch = normalize(parsed.data);
+  // Campo de senha em branco significa "manter a senha já salva" — não
+  // sobrescreve com null só porque o usuário não digitou nada de novo.
+  if (!parsed.data.bot_password) delete (patch as { bot_password?: unknown }).bot_password;
+
   const supabase = await createClient();
   const { error } = await supabase
     .from("instagram_accounts")
-    .update(normalize(parsed.data))
+    .update(patch)
     .eq("id", id);
 
   if (error) {
