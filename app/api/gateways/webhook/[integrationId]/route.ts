@@ -3,6 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { applyIncomingTransaction, type IncomingGatewayTransaction } from "@/lib/gateway/apply-transaction";
 import { resolveAccountForTransaction } from "@/lib/gateway/resolve-account";
+import { isSyncPayProvider, normalizeSyncPayWebhookPayload } from "@/lib/gateway/syncpay-shared";
 
 // -----------------------------------------------------------------------------
 // Webhook genérico de gateway de pagamento.
@@ -98,7 +99,9 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       }
     }
 
-    const tx: IncomingGatewayTransaction = {
+    const syncPayTx = isSyncPayProvider(integration.provider_name) ? normalizeSyncPayWebhookPayload(body) : null;
+
+    const tx: IncomingGatewayTransaction = syncPayTx ?? {
       external_transaction_id: String(body.external_transaction_id ?? body.id ?? ""),
       status: body.status,
       amount: Number(body.amount ?? 0),

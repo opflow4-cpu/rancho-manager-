@@ -145,27 +145,34 @@ export default async function OperatorDetailPage({
         </h3>
 
         <Card>
-          <CardContent className="flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between">
-            {integration ? (
-              <div className="flex flex-wrap items-center gap-3 text-sm">
-                <Plug className="h-4 w-4 text-primary" />
-                <span className="font-medium">{integration.provider_name}</span>
-                <Badge variant={GATEWAY_STATUS_BADGE[integration.status as GatewayStatus]} dot>
-                  {GATEWAY_STATUS_LABEL[integration.status as GatewayStatus]}
-                </Badge>
-                <span className="text-muted-foreground">
-                  Última sincronização: {formatDateTime(integration.last_sync_at)}
-                </span>
-              </div>
-            ) : (
-              <p className="text-sm text-muted-foreground">Nenhum gateway configurado para este operador.</p>
+          <CardContent className="flex flex-col gap-3 p-5">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              {integration ? (
+                <div className="flex flex-wrap items-center gap-3 text-sm">
+                  <Plug className="h-4 w-4 text-primary" />
+                  <span className="font-medium">{integration.provider_name}</span>
+                  <Badge variant={GATEWAY_STATUS_BADGE[integration.status as GatewayStatus]} dot>
+                    {GATEWAY_STATUS_LABEL[integration.status as GatewayStatus]}
+                  </Badge>
+                  <span className="text-muted-foreground">
+                    Última sincronização: {formatDateTime(integration.last_sync_at)}
+                  </span>
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground">Nenhum gateway configurado para este operador.</p>
+              )}
+              <Link
+                href="/gateways"
+                className="flex shrink-0 items-center gap-1.5 text-sm font-medium text-primary hover:underline"
+              >
+                {integration ? "Gerenciar em Gateways" : "Configurar em Gateways"} <ExternalLink className="h-3.5 w-3.5" />
+              </Link>
+            </div>
+            {integration?.last_error && (
+              <p className="rounded-md border border-destructive/30 bg-destructive/10 p-2 text-xs text-destructive">
+                {integration.last_error}
+              </p>
             )}
-            <Link
-              href="/gateways"
-              className="flex shrink-0 items-center gap-1.5 text-sm font-medium text-primary hover:underline"
-            >
-              {integration ? "Gerenciar em Gateways" : "Configurar em Gateways"} <ExternalLink className="h-3.5 w-3.5" />
-            </Link>
           </CardContent>
         </Card>
 
